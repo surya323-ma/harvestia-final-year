@@ -1,0 +1,20 @@
+# HARVESTIA — Production Requirements
+django==4.2.16
+djangorestframework==3.15.1
+django-cors-headers==4.4.0
+djangorestframework-simplejwt==5.3.1
+django-filter==24.3
+drf-spectacular==0.27.2
+channels==4.1.0
+daphne==4.1.2
+python-dotenv==1.0.1
+Pillow==10.4.0
+whitenoise==6.7.0
+scikit-learn==1.5.2
+numpy==1.26.4
+pandas==2.2.3
+joblib==1.4.2
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+gunicorn==22.0.0
+uvicorn==0.30.6

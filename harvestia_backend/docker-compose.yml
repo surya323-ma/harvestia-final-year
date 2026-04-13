@@ -1,0 +1,150 @@
+version: '3.9'
+
+# ══════════════════════════════════════════════════════════════
+# HARVESTIA - Production Docker Compose
+# Services: Django, Celery, Celery Beat, Redis, PostgreSQL+PostGIS, Nginx
+# ══════════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL with PostGIS (geospatial support) ────────────
+  db:
+    image: postgis/postgis:15-3.4
+    container_name: harvestia_db
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Redis (Cache + Channel Layer + Celery Broker) ────────────
+  redis:
+    image: redis:7-alpine
+    container_name: harvestia_redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+    restart: unless-stopped
+
+  # ── Django Backend (ASGI via Daphne for WS support) ──────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: harvestia_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --no-input &&
+             daphne -b 0.0.0.0 -p 8000 harvestia_backend.asgi:application"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+      - ml_models:/app/ml_engine/models/trained
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: harvestia_backend.settings.production
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  # ── Celery Worker (ML inference + background jobs) ────────────
+  celery_worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: harvestia_celery
+    command: celery -A harvestia_backend worker --loglevel=info --concurrency=4 -Q default,ml_inference,alerts
+    volumes:
+      - .:/app
+      - ml_models:/app/ml_engine/models/trained
+    depends_on:
+      - redis
+      - db
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: harvestia_backend.settings.production
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G   # ML models need memory
+          cpus: '4.0'
+
+  # ── Celery Beat (Scheduler for periodic tasks) ────────────────
+  celery_beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: harvestia_beat
+    command: celery -A harvestia_backend beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: harvestia_backend.settings.production
+    restart: unless-stopped
+
+  # ── Celery Flower (Task Monitoring Dashboard) ─────────────────
+  flower:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: harvestia_flower
+    command: celery -A harvestia_backend flower --port=5555 --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    env_file: .env
+    restart: unless-stopped
+
+  # ── Nginx (Reverse Proxy + Static Files) ─────────────────────
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: harvestia_nginx
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  ml_models:

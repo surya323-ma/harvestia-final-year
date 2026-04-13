@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts already loaded via index.html ── */
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #04100a;
+    color: #e2ede6;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #04100a; }
+  ::-webkit-scrollbar-thumb { background: #166534; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #16a34a; }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-400
+           text-surface font-bold font-body rounded-xl px-6 py-3 text-sm
+           transition-all duration-300 hover:-translate-y-0.5 cursor-pointer border-0;
+  }
+  .btn-primary:hover { box-shadow: 0 12px 32px rgba(74,222,128,0.35); }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-transparent text-brand-400
+           border border-brand-800 font-semibold font-body rounded-xl px-6 py-3 text-sm
+           transition-all duration-300 hover:-translate-y-0.5 cursor-pointer;
+  }
+  .btn-secondary:hover { @apply border-brand-400 bg-brand-400/5; }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 bg-transparent text-green-600
+           font-semibold font-body rounded-lg px-4 py-2 text-sm
+           transition-all duration-200 cursor-pointer border-0;
+  }
+  .btn-ghost:hover { @apply text-brand-400 bg-brand-400/5; }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-surface-100 border border-brand-800/50 rounded-2xl
+           transition-all duration-300;
+  }
+  .card:hover {
+    @apply border-brand-600/50;
+    box-shadow: 0 16px 48px rgba(74,222,128,0.08);
+  }
+  .card-flat {
+    @apply bg-surface-100 border border-brand-800/30 rounded-2xl;
+  }
+
+  /* ── Form inputs ── */
+  .input {
+    @apply w-full bg-brand-400/5 border border-brand-800/50 rounded-xl
+           px-4 py-3 text-sm text-green-100 font-body
+           outline-none transition-all duration-200
+           placeholder:text-green-900;
+  }
+  .input:focus { @apply border-brand-500/60 ring-1 ring-brand-500/20; }
+
+  .label {
+    @apply block text-xs font-bold uppercase tracking-widest text-green-700 mb-2;
+  }
+
+  /* ── Badges ── */
+  .badge         { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold; }
+  .badge-green   { @apply bg-brand-400/10 text-brand-400 border border-brand-400/25; }
+  .badge-yellow  { @apply bg-yellow-400/10 text-yellow-400 border border-yellow-400/25; }
+  .badge-red     { @apply bg-red-400/10 text-red-400 border border-red-400/25; }
+  .badge-blue    { @apply bg-blue-400/10 text-blue-400 border border-blue-400/25; }
+  .badge-orange  { @apply bg-orange-400/10 text-orange-400 border border-orange-400/25; }
+
+  /* ── Alerts ── */
+  .alert-danger  { @apply bg-red-400/5 border-l-4 border-red-400 rounded-r-xl p-3; }
+  .alert-warn    { @apply bg-yellow-400/5 border-l-4 border-yellow-400 rounded-r-xl p-3; }
+  .alert-success { @apply bg-brand-400/5 border-l-4 border-brand-400 rounded-r-xl p-3; }
+  .alert-info    { @apply bg-blue-400/5 border-l-4 border-blue-400 rounded-r-xl p-3; }
+
+  /* ── Progress Bar ── */
+  .progress-track { @apply h-1.5 bg-brand-400/10 rounded-full overflow-hidden; }
+  .progress-fill  { @apply h-full rounded-full transition-all duration-1000 ease-out; }
+
+  /* ── Sidebar link ── */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
+           text-green-700 transition-all duration-200 cursor-pointer;
+  }
+  .nav-item:hover { @apply text-brand-400 bg-brand-400/5; }
+  .nav-item.active { @apply text-brand-400 bg-brand-400/10 border border-brand-400/20; }
+
+  /* ── Section tag ── */
+  .section-tag {
+    @apply inline-flex items-center gap-2 bg-brand-400/10 border border-brand-400/20
+           rounded-full px-4 py-1.5 text-xs font-bold text-brand-400 tracking-widest uppercase;
+  }
+
+  /* ── Page heading ── */
+  .page-title {
+    @apply font-display font-bold tracking-tight text-green-50;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -0.8px;
+  }
+
+  /* ── Grid background ── */
+  .bg-grid {
+    background-image: theme('backgroundImage.grid-green');
+    background-size: theme('backgroundSize.grid');
+  }
+
+  /* ── Live dot ── */
+  .live-dot {
+    @apply relative inline-flex items-center justify-center w-2 h-2;
+  }
+  .live-dot::before {
+    content: '';
+    @apply absolute w-2 h-2 rounded-full bg-brand-400 animate-pulse-dot;
+  }
+  .live-dot::after {
+    content: '';
+    @apply w-2 h-2 rounded-full bg-brand-400;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #4ade80 20%, #a3e635 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}

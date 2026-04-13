@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: harvestia-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python seed_demo_data.py
+    startCommand: gunicorn harvestia_backend.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: harvestia_backend.settings.production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.4
+      - key: FRONTEND_URL
+        value: https://harvestia-app.onrender.com

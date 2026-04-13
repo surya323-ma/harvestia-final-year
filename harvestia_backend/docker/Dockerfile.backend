@@ -1,0 +1,25 @@
+FROM python:3.11-slim-bookworm
+
+# System dependencies for PostGIS + OpenCV + ML libraries
+RUN apt-get update && apt-get install -y \
+    binutils libproj-dev gdal-bin libgdal-dev \
+    libgeos-dev libgeos++-dev \
+    build-essential pkg-config \
+    libpq-dev postgresql-client \
+    libopencv-dev \
+    git curl wget \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Create directories for ML models + media
+RUN mkdir -p ml_engine/models/trained mediafiles staticfiles logs
+
+EXPOSE 8000
