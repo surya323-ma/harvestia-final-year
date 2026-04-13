@@ -37,7 +37,7 @@ export default function DashboardPage() {
   useEffect(() => {
     analyticsAPI.dashboard()
       .then(res => setDashData(res.data))
-      .catch(() => {}) // silent fallback
+      .catch(() => {})
   }, [])
 
   const SENSOR_ROWS = [
@@ -71,6 +71,12 @@ export default function DashboardPage() {
         title={t('dashboard.title')}
         desc="Real-time overview of all your fields, AI models, and IoT sensors."
       >
+        {/* ✅ SIRF YAHI CHANGE HAI — Logo add kiya */}
+        <img
+          src="/harvestia-logo.png"
+          alt="Harvestia Logo"
+          className="w-10 h-10 rounded-full object-cover"
+        />
         <button onClick={() => navigate('/app/ai/yield')} className="btn-primary text-sm py-2.5">
           <Brain size={15} /> {t('common.runModel')}
         </button>

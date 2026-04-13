@@ -59,9 +59,7 @@ export default function AppLayout() {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-3.5 h-16 border-b border-brand-800/30">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-700 to-brand-400 flex items-center justify-center text-lg flex-shrink-0 animate-glow">
-            🌿
-          </div>
+          <img src="/harvestia-logo.png"alt="Harvestia"className="w-15 h-10 rounded-full object-cover flex-shrink-0"/>
           {!collapsed && (
             <span className="font-display font-bold text-lg text-brand-400 tracking-tight whitespace-nowrap">
               Harvestia

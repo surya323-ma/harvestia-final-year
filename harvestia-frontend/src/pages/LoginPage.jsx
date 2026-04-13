@@ -27,9 +27,11 @@ function AuthLayout({ title, subtitle, children }) {
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-700 to-brand-400 flex items-center justify-center text-2xl animate-glow">
-            🌿
-          </div>
+          <img
+  src="/harvestia-logo.png"
+  alt="Harvestia"
+  className="w-27 h-24 rounded-full object-cover"
+/>
           <span className="font-display font-bold text-2xl text-brand-400 tracking-tight">Harvestia</span>
         </div>
 
