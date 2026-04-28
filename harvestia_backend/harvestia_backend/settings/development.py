@@ -2,7 +2,7 @@
 import os
 from .base import *
 
-DEBUG         = True
+DEBUG         = False
 ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
