@@ -34,7 +34,9 @@ CORS_ALLOWED_ORIGINS = [
 if FRONTEND_URL:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 CORS_ALLOW_ALL_ORIGINS = False
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://harvestia-app.onrender.com"
+]
 # ── Security ────────────────────────────────────────────────────
 SECURE_BROWSER_XSS_FILTER   = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
