@@ -33,7 +33,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 if FRONTEND_URL:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
-CORS_ALLOW_ALL_ORIGINS = not bool(FRONTEND_URL)
+CORS_ALLOW_ALL_ORIGINS = False
 
 # ── Security ────────────────────────────────────────────────────
 SECURE_BROWSER_XSS_FILTER   = True
