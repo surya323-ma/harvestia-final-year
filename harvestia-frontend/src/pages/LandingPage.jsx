@@ -119,11 +119,11 @@ export default function LandingPage() {
             <button onClick={goApp} className="btn-primary text-base px-8 py-4">
               Open Live Dashboard <ArrowRight size={18} />
             </button>
-            <button className="btn-secondary text-base px-8 py-4">
+            {/* <button className="btn-secondary text-base px-8 py-4">
               <Play size={16} /> Watch Demo
             </button>
           </div>
-
+*/}
           {/* Stats */}
           <div className="flex justify-center gap-12 mt-20 flex-wrap animate-fade-up" style={{ animationDelay: '.4s' }}>
             {STATS.map(s => (
