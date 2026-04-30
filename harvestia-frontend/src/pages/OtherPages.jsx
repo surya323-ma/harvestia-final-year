@@ -312,14 +312,20 @@ export function FieldsPage() {
   }, [])
 
   const displayFields = apiFields || DEMO_FIELDS
-  const filtered = displayFields.filter(f =>
-    f.crop.toLowerCase().includes(search.toLowerCase()) || f.id.toString().includes(search)
+  const filtered = displayFields.filter(f =>{
+  const q = search.toLowerCase()
+
+  return (
+    f.crop.toLowerCase().includes(q) ||
+    f.id.toLowerCase().includes(q) ||
+    (`field ${f.id}`.toLowerCase().includes(q))
   )
+})
 
   return (
     <div className="max-w-6xl mx-auto space-y-5">
-      <PageHeader title="🗺️ Field Monitor" tag="SATELLITE + IoT REAL-TIME MONITORING" desc="AI health scores and live sensor data for all your fields.">
-        <button className="btn-primary text-sm py-2.5"><Plus size={15}/> Add Field</button>
+      <PageHeader title="🗺️ Field Monitor" tag=" REAL-TIME MONITORING" desc="AI health scores and live sensor data for all your fields.">
+        
       </PageHeader>
 
       <div className="flex gap-3">
@@ -327,7 +333,7 @@ export function FieldsPage() {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-green-800" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search fields or crops..." className="input pl-9" />
         </div>
-        <button className="btn-secondary text-sm py-2.5 px-4"><Filter size={14}/> Filter</button>
+        
       </div>
 
       {/* Summary Grid */}
@@ -389,6 +395,7 @@ export function FieldsPage() {
     </div>
   )
 }
+
 
 // ════════════════════════════════════════════════════════════════
 // 4. CROPS PAGE
