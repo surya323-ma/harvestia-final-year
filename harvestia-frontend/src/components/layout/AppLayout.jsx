@@ -156,12 +156,7 @@ export default function AppLayout() {
                   : 'bg-red-400/8 text-red-400 border-red-400/20'
               }`}>
               {fullyOnline ? <Wifi size={12} /> : <WifiOff size={12} />}
-              {fullyOnline
-                ? t('common.allSystems')
-                : backendOnline
-                  ? t('common.backendOnly')
-                  : t('common.offline')
-              }
+              {fullyOnline || backendOnline ? 'Online' : 'Offline'}
             </div>
 
             {/* Alerts bell */}
