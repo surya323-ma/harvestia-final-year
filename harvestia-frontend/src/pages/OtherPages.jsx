@@ -393,29 +393,58 @@ export function FieldsPage() {
 // ════════════════════════════════════════════════════════════════
 // 4. CROPS PAGE
 // ════════════════════════════════════════════════════════════════
-
+// DEMO DATA
 const DEMO_SEASONS = [
-  { id:1, crop:'Wheat',   field:'A-12', season:'Rabi 2025', stage:'Maturity',   sowing:'Nov 15',  harvest:'Apr 8',  yield:4.2, health:94, color:'#4ade80' },
+  {
+    id:1, crop:'Wheat',   field:'A-12', season:'Rabi 2025', stage:'Maturity',   sowing:'Nov 15',  harvest:'Apr 8',  yield:4.2, health:94, color:'#4ade80' ,
+    logs: [
+      { date:'2025-11-15', text:'🌱 Sowing completed' },
+      { date:'2025-12-05', text:'💧 First irrigation done' },
+      { date:'2026-01-10', text:'🌿 Fertilizer applied' },
+      { date:'2026-02-02', text:'🐛 No pest detected' },
+    ]
+  },
   { id:2, crop:'Rice',    field:'B-07', season:'Kharif 2025',stage:'Grain Fill', sowing:'Jun 20',  harvest:'Nov 5',  yield:null,health:78, color:'#a3e635' },
   { id:3, crop:'Cotton',  field:'C-03', season:'Kharif 2025',stage:'Flowering',  sowing:'May 10',  harvest:'Jan 10', yield:null,health:61, color:'#eab308' },
   { id:4, crop:'Soybean', field:'D-15', season:'Kharif 2025',stage:'Vegetative', sowing:'Jun 25',  harvest:'Oct 20', yield:null,health:88, color:'#4ade80' },
   { id:5, crop:'Corn',    field:'E-09', season:'Rabi 2025', stage:'Seedling',   sowing:'Dec 1',   harvest:'Apr 20', yield:null,health:44, color:'#f87171' },
+
 ]
 
 export function CropsPage() {
+
+  const [openLogId, setOpenLogId] = useState(null)
+  const [showForm, setShowForm] = useState(false)
+  const [seasons, setSeasons] = useState(DEMO_SEASONS)
+  const [formData, setFormData] = useState({crop: '',field: '',season: '',sowing: '',harvest: '',})
+
   return (
     <div className="max-w-5xl mx-auto space-y-5">
-      <PageHeader title="🌾 Crop Management" tag="CROP LIFECYCLE TRACKING" desc="Monitor all crop seasons, stages, inputs, and yield records.">
-        <button className="btn-primary text-sm py-2.5"><Plus size={15}/> New Season</button>
+
+      {/* HEADER */}
+      <PageHeader
+        title="🌾 Crop Management"
+        tag="CROP LIFECYCLE TRACKING"
+        desc="Monitor all crop seasons, stages, inputs, and yield records."
+      >
+        <button
+          onClick={() => setShowForm(true)}
+          className="btn-primary text-sm py-2.5 flex items-center gap-2"
+        >
+          <Plus size={15}/> New Season
+        </button>
       </PageHeader>
 
+      {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {DEMO_SEASONS.map(s => (
+        {seasons.map(s => (
           <div key={s.id} className="card p-5">
+
+            {/* HEADER */}
             <div className="flex items-start justify-between mb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-display font-bold text-green-100 text-base">{s.crop}</span>
+                  <span className="font-bold text-green-100">{s.crop}</span>
                   <span className="badge badge-blue text-xs">{s.season}</span>
                 </div>
                 <p className="text-xs text-green-800">Field {s.field}</p>
@@ -423,27 +452,86 @@ export function CropsPage() {
               <DonutChart value={s.health} size={44} color={s.color} />
             </div>
 
+            {/* DETAILS */}
             <div className="space-y-2 mb-4">
               {[
-                ['Stage',    s.stage],
-                ['Sowing',   s.sowing],
-                ['Harvest',  s.harvest],
-                ['Yield',    s.yield ? `${s.yield} t/ac` : 'Pending'],
+                ['Stage', s.stage],
+                ['Sowing', s.sowing],
+                ['Harvest', s.harvest],
+                ['Yield', s.yield ? `${s.yield} t/ac` : 'Pending'],
               ].map(([label, val]) => (
                 <div key={label} className="flex justify-between text-xs py-1 border-b border-brand-800/15 last:border-0">
-                  <span className="text-green-800">{label}</span>
-                  <span className={`font-semibold ${val==='Pending'?'text-yellow-400':'text-green-200'}`}>{val}</span>
+                  <span>{label}</span>
+                  <span className={`font-semibold ${val==='Pending'?'text-yellow-400':'text-green-200'}`}>
+                    {val}
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-2">
-              <button className="btn-ghost text-xs py-2 flex-1 border border-brand-800/20 rounded-lg">View Logs</button>
-              <button className="btn-primary text-xs py-2 flex-1 justify-center">AI Predict</button>
+            {/* VIEW LOG BUTTON */}
+            <div className="space-y-2">
+              <button
+                onClick={() => setOpenLogId(openLogId === s.id ? null : s.id)}
+                className="btn-ghost text-xs py-2 w-full border border-brand-800/20 rounded-lg"
+              >
+                View Logs
+              </button>
+
+              {/* TIMELINE LOGS */}
+              {openLogId === s.id && (
+                <div className="p-3 rounded-lg bg-brand-900/30">
+                  <div className="border-l-2 border-green-500 pl-3 space-y-3">
+                    {s.logs?.map((log, i) => (
+                      <div key={i} className="relative">
+                        <span className="absolute -left-[9px] top-1 w-3 h-3 bg-green-400 rounded-full"></span>
+                        <p className="text-xs text-green-200 font-semibold">{log.date}</p>
+                        <p className="text-xs text-green-300">{log.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
+
           </div>
         ))}
       </div>
+
+      {/* MODAL FORM */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+          <div className="bg-brand-900 p-6 rounded-xl w-[320px] space-y-3">
+
+            <h2 className="text-green-200 font-bold">Add New Season</h2>
+
+            <input placeholder="Crop" className="w-full p-2 rounded bg-brand-800 text-white" onChange={e => setFormData({...formData, crop:e.target.value})}/>
+            <input placeholder="Field" className="w-full p-2 rounded bg-brand-800 text-white" onChange={e => setFormData({...formData, field:e.target.value})}/>
+            <input placeholder="Season" className="w-full p-2 rounded bg-brand-800 text-white" onChange={e => setFormData({...formData, season:e.target.value})}/>
+            <input placeholder="Sowing Date" className="w-full p-2 rounded bg-brand-800 text-white" onChange={e => setFormData({...formData, sowing:e.target.value})}/>
+            <input placeholder="Harvest Date" className="w-full p-2 rounded bg-brand-800 text-white" onChange={e => setFormData({...formData, harvest:e.target.value})}/>
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => setShowForm(false)} className="flex-1 bg-gray-600 py-2 rounded">
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  const newSeason = { id: Date.now(), ...formData, stage: 'New', yield: null, health: 80, color:'#4ade80', logs: []}
+                  setSeasons([newSeason, ...seasons])
+                  setShowForm(false)
+                }}
+                className="flex-1 bg-green-600 py-2 rounded"
+              >
+                Add
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
