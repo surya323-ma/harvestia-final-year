@@ -658,7 +658,6 @@ export function AlertsPage() {
                   <p className="text-sm text-green-500 leading-relaxed">{a.detail}</p>
                 </div>
                 <div className="flex flex-col gap-2 flex-shrink-0">
-                  <button className="btn-primary text-xs py-2 px-3 whitespace-nowrap">{a.action} →</button>
                   {!done && (
                     <button onClick={() => handleResolve(a.id, a.rawId)}
                       className="btn-secondary text-xs py-2 px-3 flex items-center gap-1">
@@ -679,59 +678,210 @@ export function AlertsPage() {
 // 6. MARKET PAGE
 // ════════════════════════════════════════════════════════════════
 
+import {
+  LineChart,
+  Line,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
+
+// DEMO DATA
 const PRICES = [
-  { crop:'Wheat',     msp:2275, current:2380, change:+4.6, unit:'₹/quintal', trend:'up',   forecast:'Bullish' },
-  { crop:'Rice',      msp:2183, current:2150, change:-1.5, unit:'₹/quintal', trend:'down', forecast:'Neutral' },
-  { crop:'Cotton',    msp:6620, current:7100, change:+7.2, unit:'₹/quintal', trend:'up',   forecast:'Bullish' },
-  { crop:'Soybean',   msp:4600, current:4520, change:-1.7, unit:'₹/quintal', trend:'down', forecast:'Bearish' },
-  { crop:'Corn',      msp:1935, current:1970, change:+1.8, unit:'₹/quintal', trend:'up',   forecast:'Neutral' },
-  { crop:'Mustard',   msp:5650, current:5900, change:+4.4, unit:'₹/quintal', trend:'up',   forecast:'Bullish' },
+  { crop:'Wheat', msp:2275, current:2380, change:+4.6, unit:'₹/quintal', trend:'up', forecast:'Bullish' },
+  { crop:'Rice', msp:2183, current:2150, change:-1.5, unit:'₹/quintal', trend:'down', forecast:'Neutral' },
+  { crop:'Cotton', msp:6620, current:7100, change:+7.2, unit:'₹/quintal', trend:'up', forecast:'Bullish' },
+  { crop:'Soybean', msp:4600, current:4520, change:-1.7, unit:'₹/quintal', trend:'down', forecast:'Bearish' },
+  { crop:'Corn', msp:1935, current:1970, change:+1.8, unit:'₹/quintal', trend:'up', forecast:'Neutral' },
+  { crop:'Mustard', msp:5650, current:5900, change:+4.4, unit:'₹/quintal', trend:'up', forecast:'Bullish' },
 ]
 
 export function MarketPage() {
+  const [prices, setPrices] = useState(PRICES)
+  const [selectedCrop, setSelectedCrop] = useState(null)
+  const [forecastData, setForecastData] = useState([])
+
+  // Generate forecast with MSP line
+  const generateForecast = (base, msp) => {
+    let price = base
+
+    return Array.from({ length: 30 }, (_, i) => {
+      const change = (Math.random() * 2 - 1)
+      price = Math.round(price * (1 + change / 100))
+
+      return {
+        day: `D${i + 1}`,
+        price,
+        msp
+      }
+    })
+  }
+
+  // Refresh prices
+  const handleRefresh = () => {
+    const updated = prices.map(p => {
+      const randomChange = (Math.random() * 4 - 2)
+      const newPrice = Math.round(p.current * (1 + randomChange / 100))
+
+      return {
+        ...p,
+        current: newPrice,
+        change: +((newPrice - p.msp) / p.msp * 100).toFixed(1),
+        trend: newPrice >= p.msp ? 'up' : 'down'
+      }
+    })
+
+    setPrices(updated.sort(() => Math.random() - 0.5))
+  }
+
   return (
     <div className="max-w-5xl mx-auto space-y-5">
-      <PageHeader title="📊 Market Intelligence" tag="LSTM PRICE FORECAST · 30-DAY HORIZON" desc="AI-powered mandi price forecasts to optimize selling decisions.">
-        <button className="btn-secondary text-sm py-2.5"><RefreshCw size={14}/> Refresh Prices</button>
+
+      {/* HEADER */}
+      <PageHeader
+        title="📊 Market Intelligence"
+        tag="LSTM PRICE FORECAST · 30-DAY HORIZON"
+        desc="AI-powered mandi price forecasts to optimize selling decisions."
+      >
+        <button
+          onClick={handleRefresh}
+          className="btn-secondary text-sm py-2.5 flex items-center gap-2"
+        >
+          <RefreshCw size={14}/> Refresh Prices
+        </button>
       </PageHeader>
 
+      {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {PRICES.map((p, i) => (
+        {prices.map((p, i) => (
           <div key={i} className="card p-5">
+
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="font-display font-bold text-green-100 text-base mb-1">{p.crop}</h3>
-                <p className="text-xs text-green-800">MSP: ₹{p.msp.toLocaleString()}</p>
+                <h3 className="font-bold text-green-100">{p.crop}</h3>
+                <p className="text-xs text-green-800">MSP: ₹{p.msp}</p>
               </div>
-              <span className={`badge text-xs ${p.forecast==='Bullish'?'badge-green':p.forecast==='Bearish'?'badge-red':'badge-yellow'}`}>
+
+              <span className={`badge text-xs ${
+                p.forecast==='Bullish' ? 'badge-green' :
+                p.forecast==='Bearish' ? 'badge-red' :
+                'badge-yellow'
+              }`}>
                 {p.forecast}
               </span>
             </div>
+
             <div className="flex items-end justify-between">
               <div>
-                <div className="font-display font-bold text-green-50" style={{ fontSize:28, letterSpacing:'-1px' }}>
-                  ₹{p.current.toLocaleString()}
+                <div className="text-2xl font-bold text-green-50">
+                  ₹{p.current}
                 </div>
                 <div className="text-xs text-green-800">{p.unit}</div>
               </div>
-              <div className={`text-right ${p.trend==='up'?'text-brand-400':'text-red-400'}`}>
-                <div className="font-bold text-lg">{p.trend==='up'?'↑':'↓'} {Math.abs(p.change)}%</div>
-                <div className="text-xs opacity-70">vs MSP</div>
+
+              <div className={p.trend==='up' ? 'text-green-400' : 'text-red-400'}>
+                <div className="font-bold">
+                  {p.trend==='up' ? '↑' : '↓'} {Math.abs(p.change)}%
+                </div>
+                <div className="text-xs">vs MSP</div>
               </div>
             </div>
-            <div className="mt-4">
-              <ProgressBar value={Math.min(100, (p.current / p.msp) * 100)} color={p.trend==='up'?'#4ade80':'#f87171'} />
+
+            {/* PROGRESS */}
+            <div className="mt-4 h-2 bg-brand-800/30 rounded">
+              <div
+                className="h-full rounded"
+                style={{
+                  width: `${Math.min(100, (p.current / p.msp) * 100)}%`,
+                  background: p.trend==='up' ? '#4ade80' : '#f87171'
+                }}
+              />
             </div>
-            <button className="btn-ghost w-full justify-center mt-3 text-xs py-2 border border-brand-800/20 rounded-lg">
+
+            {/* BUTTON */}
+            <button
+              onClick={() => {
+                setSelectedCrop(p)
+                setForecastData(generateForecast(p.current, p.msp))
+              }}
+              className="btn-ghost w-full mt-3 text-xs py-2 border border-brand-800/20 rounded-lg"
+            >
               View 30-day Forecast →
             </button>
+
           </div>
         ))}
       </div>
+
+      {/* MODAL */}
+      {selectedCrop && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+
+          <div className="bg-brand-900 p-5 rounded-xl w-[420px]">
+
+            <h2 className="text-green-200 font-bold mb-3">
+              {selectedCrop.crop} Forecast
+            </h2>
+
+            <div className="w-full h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={forecastData}>
+
+                  {/* Gradient */}
+                  <defs>
+                    <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4ade80" stopOpacity={0.4}/>
+                      <stop offset="100%" stopColor="#4ade80" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+
+                  <XAxis dataKey="day" stroke="#4ade80" fontSize={10}/>
+                  <YAxis stroke="#4ade80" fontSize={10}/>
+
+                  <Tooltip 
+                    contentStyle={{ background:'#022c22', border:'none' }}
+                    labelStyle={{ color:'#4ade80' }}
+                  />
+
+                  {/* MSP LINE */}
+                  <Line
+                    type="monotone"
+                    dataKey="msp"
+                    stroke="#eab308"
+                    strokeDasharray="5 5"
+                    strokeWidth={2}
+                    dot={false}
+                    name="MSP"
+                  />
+
+                  {/* FORECAST LINE + AREA */}
+                  <Area
+                    type="monotone"
+                    dataKey="price"
+                    stroke="#4ade80"
+                    fill="url(#priceGradient)"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Forecast"
+                  />
+
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <button
+              onClick={() => setSelectedCrop(null)}
+              className="mt-4 w-full bg-green-600 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
 // ════════════════════════════════════════════════════════════════
 // 7. REPORTS PAGE
 // ════════════════════════════════════════════════════════════════
