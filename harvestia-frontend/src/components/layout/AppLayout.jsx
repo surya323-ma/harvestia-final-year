@@ -148,7 +148,7 @@ export default function AppLayout() {
             <LanguageSwitcher />
 
             {/* Backend + WebSocket status */}
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-all duration-500
+            {/*<div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border transition-all duration-500
               ${fullyOnline
                 ? 'bg-brand-400/8 text-brand-400 border-brand-400/20'
                 : backendOnline
@@ -162,7 +162,7 @@ export default function AppLayout() {
                   ? t('common.backendOnly')
                   : t('common.offline')
               }
-            </div>
+            </div>*/}
 
             {/* Alerts bell */}
             <NavLink to="/app/alerts" className="relative p-2 rounded-xl hover:bg-brand-400/8 transition-colors">
