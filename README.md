@@ -34,6 +34,6 @@ For any queries or suggestions:
 
 Surya Omar ,
 Krishna Gupta ,
-Rishabha Patel ,
+Rishabha Patel .
 
 ⭐ If you like this project, consider giving it a star on GitHub.
