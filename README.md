@@ -32,8 +32,8 @@ We also thank our college faculty members and team members for their continuous 
 
 For any queries or suggestions:
 
-Surya Omar
-Krishna Gupta
-Rishabha Patel
+Surya Omar ,
+Krishna Gupta ,
+Rishabha Patel ,
 
 ⭐ If you like this project, consider giving it a star on GitHub.
