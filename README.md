@@ -4,9 +4,9 @@ Harvestia combines satellite imagery, IoT sensors, and 7 production ML/DL models
 # 📘 Major Project Report
 👨‍🎓 Submitted By
 
-Surya Omar       2305051539008--
-Krishna Gupta    2205051530103---
-Rishabh Patel    2105051530049---
+Surya Omar    :  2305051539008 ---
+Krishna Gupta :  2105051530049 ---
+Rishabh Patel :  2205051530103  ---
 
 # 👩‍🏫 Under the Guidance of
 
