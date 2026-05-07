@@ -3,9 +3,10 @@
 Harvestia combines satellite imagery, IoT sensors, and 7 production ML/DL models to help farmers maximize yield, minimize waste, and make data-driven decisions — in real time.
 # 📘 Major Project Report
 👨‍🎓 Submitted By
-Surya Omar       2305051539008
-Krishna Gupta    2205051530103
-Rishabh Patel    2105051530049
+
+Surya Omar       2305051539008--
+Krishna Gupta    2205051530103---
+Rishabh Patel    2105051530049---
 
 # 👩‍🏫 Under the Guidance of
 
