@@ -11,7 +11,7 @@ Rishabh Patel :  2205051530103  ---
 # 👩‍🏫 Under the Guidance of
 
 Mrs. Richa Awasthi 
-
+ # Project link ----------https://harvestia-app.onrender.com/app/dashboard-------------------
 # 📖 Project Overview
 
 HARVESTIA is an AI-powered smart agriculture platform designed to help farmers monitor crop health, analyze field conditions, predict diseases, and improve farming decisions using modern technologies such as Artificial Intelligence, Machine Learning, Satellite Monitoring, and Data Analytics.
